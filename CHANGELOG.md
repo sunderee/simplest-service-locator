@@ -1,0 +1,24 @@
+## 0.0.1
+
+- Initial version.
+
+## 0.0.2
+
+- Bump SDK version constraint.
+- Bump dependencies to latest.
+- Update documentation.
+
+## 0.0.3
+
+- Bump SDK version constraint.
+- Bump dependencies to latest.
+
+## 0.0.4
+
+- Bump SDK version constraint.
+- Bump dependencies to latest.
+- Regenerate `analysis_options.yaml` file.
+
+## 1.0.0
+- Bump SDK version constraint.
+- Bump dependencies to latest.

@@ -1,0 +1,16 @@
+name: simplest_service_locator
+description: Simple service locator package developed in Dart, tinier alternative to get_it
+version: 1.0.0
+
+environment:
+  sdk: ">=3.5.4 <4.0.0"
+
+topics:
+  - service-locator
+  - simple-service-locator
+  - lightweight-service-locator
+  - design-pattern
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.25.8
