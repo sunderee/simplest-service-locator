@@ -1,6 +1,7 @@
 name: simplest_service_locator
 description: Simple service locator package developed in Dart, tinier alternative to get_it
 version: 1.0.0
+repository: https://gitlab.com/dart-and-flutter-packages/simplest_service_locator
 
 environment:
   sdk: ">=3.5.4 <4.0.0"
