@@ -31,3 +31,4 @@
     - Introduce async service registration types
     - Implement new methods for async service retrieval
     - Add AsyncServiceAccessException for async service handling
+- Improve the example file
