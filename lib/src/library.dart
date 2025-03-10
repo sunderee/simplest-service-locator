@@ -1,12 +1,14 @@
 import 'package:simplest_service_locator/src/exceptions.dart';
 import 'package:simplest_service_locator/src/interfaces.dart';
+import 'package:simplest_service_locator/src/service_key.dart';
+import 'package:simplest_service_locator/src/service_registration.dart';
 
 /// Implements [ISimplestServiceLocator] to provide a service locator with
 /// singleton, lazy singleton, and factory capabilities.
 final class SimplestServiceLocator implements ISimplestServiceLocator {
   static SimplestServiceLocator? _instance;
 
-  final Map<Type, dynamic> _services = <Type, dynamic>{};
+  final Map<ServiceKey, ServiceRegistration<Object>> _services = {};
 
   SimplestServiceLocator._();
 
@@ -15,44 +17,107 @@ final class SimplestServiceLocator implements ISimplestServiceLocator {
   factory SimplestServiceLocator.instance() =>
       _instance ??= SimplestServiceLocator._();
 
-  @override
-  bool isRegistered<T extends Object>() => _services.containsKey(T);
+  /// Resets the singleton instance of [SimplestServiceLocator].
+  /// This is particularly useful for testing.
+  static void reset() {
+    _instance = null;
+  }
+
+  /// Creates a service key from a type and optional name
+  ServiceKey _createKey<T extends Object>({String? name}) =>
+      ServiceKey(T, name);
 
   @override
-  void registerSingleton<T extends Object>(T instance) {
-    if (isRegistered<T>()) {
-      throw ServiceAlreadyRegisteredException(T);
+  bool isRegistered<T extends Object>({String? name}) =>
+      _services.containsKey(_createKey<T>(name: name));
+
+  @override
+  void registerSingleton<T extends Object>(T instance, {String? name}) {
+    final key = _createKey<T>(name: name);
+    if (_services.containsKey(key)) {
+      throw ServiceAlreadyRegisteredException(T, name);
     }
 
-    _services[T] = instance;
+    _services[key] = SingletonRegistration<T>(instance);
   }
 
   @override
-  void registerLazySingleton<T extends Object>(T Function() factory) {
-    T? instance;
-    _services[T] = () => instance ??= factory();
+  void registerLazySingleton<T extends Object>(
+    T Function() factory, {
+    String? name,
+  }) {
+    final key = _createKey<T>(name: name);
+    if (_services.containsKey(key)) {
+      throw ServiceAlreadyRegisteredException(T, name);
+    }
+
+    _services[key] = LazySingletonRegistration<T>(factory);
   }
 
   @override
-  void registerFactory<T extends Object>(T Function() factory) {
-    _services[T] = factory;
+  void registerLazySingletonAsync<T extends Object>(
+    Future<T> Function() asyncFactory, {
+    String? name,
+  }) {
+    final key = _createKey<T>(name: name);
+    if (_services.containsKey(key)) {
+      throw ServiceAlreadyRegisteredException(T, name);
+    }
+
+    _services[key] = AsyncLazySingletonRegistration<T>(asyncFactory, name);
   }
 
   @override
-  T get<T extends Object>() {
-    var service = _services[T];
-    if (service is Function) {
-      service = service();
-      if (!_services.containsKey(T)) {
-        _services[T] = service;
-      }
+  void registerFactory<T extends Object>(T Function() factory, {String? name}) {
+    final key = _createKey<T>(name: name);
+    if (_services.containsKey(key)) {
+      throw ServiceAlreadyRegisteredException(T, name);
     }
 
-    if (service == null) {
-      throw ServiceNotRegisteredException(T);
+    _services[key] = FactoryRegistration<T>(factory);
+  }
+
+  @override
+  void registerFactoryAsync<T extends Object>(
+    Future<T> Function() asyncFactory, {
+    String? name,
+  }) {
+    final key = _createKey<T>(name: name);
+    if (_services.containsKey(key)) {
+      throw ServiceAlreadyRegisteredException(T, name);
     }
 
-    return service as T;
+    _services[key] = AsyncFactoryRegistration<T>(asyncFactory, name);
+  }
+
+  @override
+  T get<T extends Object>({String? name}) {
+    final key = _createKey<T>(name: name);
+    final registration = _services[key];
+
+    if (registration == null) {
+      throw ServiceNotRegisteredException(T, name);
+    }
+
+    return registration.getInstance() as T;
+  }
+
+  @override
+  Future<T> getAsync<T extends Object>({String? name}) async {
+    final key = _createKey<T>(name: name);
+    final registration = _services[key];
+
+    if (registration == null) {
+      throw ServiceNotRegisteredException(T, name);
+    }
+
+    return await registration.getInstanceAsync() as T;
+  }
+
+  @override
+  bool unregister<T extends Object>({String? name}) {
+    final key = _createKey<T>(name: name);
+    return _services.remove(key) != null;
   }
 
   @override
