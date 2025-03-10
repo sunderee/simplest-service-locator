@@ -22,3 +22,12 @@
 ## 1.0.0
 - Bump SDK version constraint.
 - Bump dependencies to latest.
+
+## 2.0.0
+- Bump SDK version constraint.
+- Bump dependencies to latest.
+- Enhance service locator with named services and async support
+    - Add support for named service registrations
+    - Introduce async service registration types
+    - Implement new methods for async service retrieval
+    - Add AsyncServiceAccessException for async service handling
