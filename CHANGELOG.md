@@ -32,3 +32,7 @@
     - Implement new methods for async service retrieval
     - Add AsyncServiceAccessException for async service handling
 - Improve the example file
+
+## 2.0.1
+- Bump SDK version constraint.
+- Change repository URL.
