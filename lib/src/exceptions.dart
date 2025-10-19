@@ -105,10 +105,9 @@ final class AsyncServiceAccessException implements Exception {
 
   @override
   String toString() {
-    final typeStr =
-        serviceName != null
-            ? '$serviceType with name "$serviceName"'
-            : '$serviceType';
+    final typeStr = serviceName != null
+        ? '$serviceType with name "$serviceName"'
+        : '$serviceType';
 
     return 'Asynchronous service of type $typeStr was accessed synchronously. '
         'Use getAsync<$serviceType>() instead.';

@@ -177,5 +177,5 @@ void main() async {
   // Reset the service locator (useful for testing)
   SimplestServiceLocator.reset();
   final newLocator = SimplestServiceLocator.instance();
-  print('New locator instance created after reset');
+  print('New locator instance $newLocator created after reset');
 }
